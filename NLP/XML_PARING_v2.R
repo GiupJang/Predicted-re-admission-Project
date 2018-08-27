@@ -1,9 +1,9 @@
-#»çÀü ÁØºñ»çÇ×########################################
-#PatientLevelPrediction.R ½ÇÇà ÈÄ ½ÇÇàÇÒ °Í.
+#ì‚¬ì „ ì¤€ë¹„ì‚¬í•­########################################
+#PatientLevelPrediction.R ì‹¤í–‰ í›„ ì‹¤í–‰í•  ê²ƒ.
 ######################################################
 library(progress)
 
-#XML_parser -> Á¤±ÔÇ¥Çö½ÄÀ» ÅëÇØ ÆÄ½Ì ÁøÇà
+#XML_parser -> ì •ê·œí‘œí˜„ì‹ì„ í†µí•´ íŒŒì‹± ì§„í–‰
 
 XML_PARSING <- function(xmlList){
     pattern_start <- as.vector(gregexpr('<[^/<>]+>[^<>]+<\\/[^<>]+>',xmlList)[[1]])
@@ -18,43 +18,43 @@ XML_PARSING <- function(xmlList){
     return(xml_data)
 }
 
-#diag_Processer(¸Ç ¾Æ·§´ÜÀÇ ÅÂ±×ÀÇ Á¤º¸¸¸ »Ì°í Ã¹ ÅÂ±×ºÎÅÍ ´ÙÀ½ Ã¹ÅÂ±×·Î ±¸ºÐÇÔ.)
-#ex) EMR ¾à¸í   ¾à¸í    ##¾à
-#    EMR Áø´Ü¸í Áø´Ü¸í  °¨±â
+#diag_Processer(ë§¨ ì•„ëž«ë‹¨ì˜ íƒœê·¸ì˜ ì •ë³´ë§Œ ë½‘ê³  ì²« íƒœê·¸ë¶€í„° ë‹¤ìŒ ì²«íƒœê·¸ë¡œ êµ¬ë¶„í•¨.)
+#ex) EMR ì•½ëª…   ì•½ëª…    ##ì•½
+#    EMR ì§„ë‹¨ëª… ì§„ë‹¨ëª…  ê°ê¸°
 
-#ÆÄ½ÌÇÏ¸ç °¢ ¾à¸íÀº ?? Áø´Ü¸íÀº ??¸¦ ±¸ºÐÇÏ±â À§ÇÑ ÇÔ¼ö.
+#íŒŒì‹±í•˜ë©° ê° ì•½ëª…ì€ ?? ì§„ë‹¨ëª…ì€ ??ë¥¼ êµ¬ë¶„í•˜ê¸° ìœ„í•œ í•¨ìˆ˜.
 DIAG_PROCESSING <- function(diag_list){
-    #Ã¹¹øÂ° > ¸¦ ±âÁØÀ¸·Î ÅÂ±×¸¦ ÃßÃâ
+    #ì²«ë²ˆì§¸ > ë¥¼ ê¸°ì¤€ìœ¼ë¡œ íƒœê·¸ë¥¼ ì¶”ì¶œ
     tag_vector  <- as.vector(regexpr('>',diag_list))
     text_vector <- as.vector(regexpr('</',diag_list))
     
-    #tag¿Í text¸¦ ±¸º°ÇØ ´ã¾ÆÁÜ
+    #tagì™€ textë¥¼ êµ¬ë³„í•´ ë‹´ì•„ì¤Œ
     tag_data_vector <- substr(diag_list,1,tag_vector)
     text_data_vector <- substr(diag_list,tag_vector+1,text_vector-1)
     
-    #Ã¹¹øÂ° ÅÂ±×ºÎÅÍ ´ÙÀ½ Ã¹ ÅÂ±×±îÁö ±¸°£ ³ª´² ÇÒ´ç
-    first_tag_vector <- as.vector(regexpr(tag_data_vector[1],tag_data_vector))# Ã¹¹øÂ° ÆÐÅÏÀÌ ³ª¿À¸é 1·Î º¯È¯
+    #ì²«ë²ˆì§¸ íƒœê·¸ë¶€í„° ë‹¤ìŒ ì²« íƒœê·¸ê¹Œì§€ êµ¬ê°„ ë‚˜ëˆ  í• ë‹¹
+    first_tag_vector <- as.vector(regexpr(tag_data_vector[1],tag_data_vector))# ì²«ë²ˆì§¸ íŒ¨í„´ì´ ë‚˜ì˜¤ë©´ 1ë¡œ ë³€í™˜
     
-    #1ÀÇ À§Ä¡¸¦ Ã£¾Æ À§Ä¡ Á¤º¸ ³Ö¾îÁÜ
+    #1ì˜ ìœ„ì¹˜ë¥¼ ì°¾ì•„ ìœ„ì¹˜ ì •ë³´ ë„£ì–´ì¤Œ
     data =c()
     for (i in 1:length(first_tag_vector)){
         if (first_tag_vector[i] == 1){
             data[i] <- i
         }
     }
-    #NA Á¦°Å
+    #NA ì œê±°
     data <- data[!is.na(data)]
     
-    #¸¶Áö¸· Ã¹¹øÂ° ÅÂ±×ÀÇ ³ª¸ÓÁö °ª
+    #ë§ˆì§€ë§‰ ì²«ë²ˆì§¸ íƒœê·¸ì˜ ë‚˜ë¨¸ì§€ ê°’
     data[length(data)+1] <- length(first_tag_vector)+1
     
-    #tag¸¦ ÇàÀÌ¸§ ¼³Á¤
+    #tagë¥¼ í–‰ì´ë¦„ ì„¤ì •
     df <- data.frame(stringsAsFactors = FALSE)
     for (i in unique(tag_data_vector)){
         df[i] <- character(0)
     }
     
-    #df¿¡ °ª ³Ö±â
+    #dfì— ê°’ ë„£ê¸°
     cnt <- 1
     for (i in 1:(length(data)-1)){
         val <- (data[i+1])-(data[i])
@@ -77,18 +77,18 @@ if(!require(parallel)) {
 }
 library(parallel)
 
-# ÄÚ¾î °³¼ö È¹µæ
+# ì½”ì–´ ê°œìˆ˜ íšë“
 numCores <- parallel::detectCores() - 1
-# Å¬·¯½ºÅÍ ÃÊ±âÈ­
+# í´ëŸ¬ìŠ¤í„° ì´ˆê¸°í™”
 myCluster <- parallel::makeCluster(numCores)
 
 Sys.time()
 
 connectionDetails<-DatabaseConnector::createConnectionDetails(dbms="sql server",
-                                                              server="128.1.99.58",
-                                                              schema="Dolphin_CDM.dbo",
-                                                              user="atlas",
-                                                              password="qwer1234!@")
+                                                              server="###.###.###.###",
+                                                              schema="###########.dbo",
+                                                              user="#####",
+                                                              password="#####")
 connection <- DatabaseConnector::connect(connectionDetails)
 connectionDetails <-connectionDetails
 connection <- connection
@@ -96,31 +96,31 @@ connection <- connection
 
 
 #
-diag_note <- DatabaseConnector::dbGetQuery(conn = connection,statement = "SELECT TOP 100 * FROM DBO.NOTE JOIN COHORT ON NOTE.person_id = COHORT.subject_id AND NOTE.NOTE_DATE = COHORT.COHORT_START_DATE WHERE cohort_definition_id = 747 AND NOTE_TITLE = \'Åð¿ø¿ä¾à\'") ;
+diag_note <- DatabaseConnector::dbGetQuery(conn = connection,statement = "SELECT TOP 100 * FROM DBO.NOTE JOIN COHORT ON NOTE.person_id = COHORT.subject_id AND NOTE.NOTE_DATE = COHORT.COHORT_START_DATE WHERE cohort_definition_id = 747 AND NOTE_TITLE = \'í‡´ì›ìš”ì•½\'") ;
 
-#Á¶°Ç ³»¿¡ ºÎÇÕÇÏ´Â dfµéÀÇ merge °ª ¼³Á¤###############################################
+#ì¡°ê±´ ë‚´ì— ë¶€í•©í•˜ëŠ” dfë“¤ì˜ merge ê°’ ì„¤ì •###############################################
 cohort_outCount_df <- merge(outcomeCount_df,diag_note,by = c("PERSON_ID","NOTE_DATE"))
 #######################################################################################
 
-#ÇÊ¿äÇÑ °ª¸¸ °¡Áö°í¿Í df »ý¼º
+#í•„ìš”í•œ ê°’ë§Œ ê°€ì§€ê³ ì™€ df ìƒì„±
 cohort_outCount_df <- data.frame(c(cohort_outCount_df['NOTE_ID'],cohort_outCount_df['NOTE_TEXT'],cohort_outCount_df['outcomeCount']),stringsAsFactors = FALSE)
 
-#XML ÆÄ¼­·Î ³ª´®(º´·ÄÃ³¸®)
+#XML íŒŒì„œë¡œ ë‚˜ëˆ”(ë³‘ë ¬ì²˜ë¦¬)
 diagnosis_list <- parallel::parLapply(cl = myCluster, X = cohort_outCount_df$NOTE_TEXT, fun = XML_PARSING)
 
-#°á°ú ÀúÀåÇÒ df »ý¼º
+#ê²°ê³¼ ì €ìž¥í•  df ìƒì„±
 final_xml_df <- data.frame(stringsAsFactors = FALSE) 
 
-#Áø´Ü¼­ ÇÏ³ªÀÇ DataFrameÀ» list¿¡ ÀúÀå(º´·ÄÃ³¸®)
+#ì§„ë‹¨ì„œ í•˜ë‚˜ì˜ DataFrameì„ listì— ì €ìž¥(ë³‘ë ¬ì²˜ë¦¬)
 result_xml_list <- parallel::parLapply(cl = myCluster, X = diagnosis_list, fun = DIAG_PROCESSING)
 
-#ÇÑ°³ÀÇ Áø´Ü¼­´ç NOTE_ID »ðÀÔ
+#í•œê°œì˜ ì§„ë‹¨ì„œë‹¹ NOTE_ID ì‚½ìž…
 for (i in 1:length(result_xml_list)){
     result_xml_list[[i]][,'NOTE_ID'] <- cohort_outCount_df[['NOTE_ID']][i]
     result_xml_list[[i]][,'outcomeCount'] <- cohort_outCount_df[['outcomeCount']][i]
 }
     
-#Á¦ÀÏ Å« °ªÀ» Ã£À½
+#ì œì¼ í° ê°’ì„ ì°¾ìŒ
 max_col <- 0
 for(i in 1:length(result_xml_list)){
     col_value <- length(result_xml_list[[i]])
@@ -157,7 +157,7 @@ if(flag == 0 ){
             }
         }
         else{
-            # ´Ù¸¥ °Íµé°ú ´Ù¸¥ ÄÃ·³ °³¼ö¸¦ °¡Áö°í ÀÖ´Â ¾ÖµéÀ» ¾î¶»°Ô Ã³¸®ÇØÁÙÁö °í¹ÎÇØºÁ¾ßÇÔ.
+            # ë‹¤ë¥¸ ê²ƒë“¤ê³¼ ë‹¤ë¥¸ ì»¬ëŸ¼ ê°œìˆ˜ë¥¼ ê°€ì§€ê³  ìžˆëŠ” ì• ë“¤ì„ ì–´ë–»ê²Œ ì²˜ë¦¬í•´ì¤„ì§€ ê³ ë¯¼í•´ë´ì•¼í•¨.
         }
     }
     
