@@ -21,23 +21,23 @@ workingFolder<-"D:/Dongsu/R_code/sql"
 setwd(workingFolder)
 
 connectionDetails<-DatabaseConnector::createConnectionDetails(dbms="sql server",
-                                                              server="128.1.99.58",
-                                                              schema="Dolphin_CDM.dbo",
-                                                              user="atlas",
-                                                              password="qwer1234!@")
+                                                              server="###.###.###.###",
+                                                              schema="###########.dbo",
+                                                              user="#####",
+                                                              password="#####")
 connection <- DatabaseConnector::connect(connectionDetails)
 connectionDetails <-connectionDetails
 connection <- connection
 
-cdmDatabaseSchema<-"Dolphin_CDM.dbo" 
-targetDatabaseSchema<-"Dolphin_CDM.dbo"
+cdmDatabaseSchema<-"#####.dbo" 
+targetDatabaseSchema<-"#####.dbo"
 targetCohortTable<-"cohort"
 targetCohortId <- 747
 outcomeCohortId <- 748
 cdmversion <- "5"
 
 #CREATE TABLE & INPUT VALUE
-#DB ¿¡¼­ 7ÀÏÀÌ»ó ÀÔ¿øÇÑ È¯ÀÚµéÀÇ Á¤º¸¸¦ »Ì¾Æ INSERT
+#DB ì—ì„œ 7ì¼ì´ìƒ ì…ì›í•œ í™˜ìë“¤ì˜ ì •ë³´ë¥¼ ë½‘ì•„ INSERT
 #===========================================
 # (T)
 #===========================================
@@ -55,7 +55,7 @@ sql <- SqlRender::translateSql(sql,
 
 DatabaseConnector::executeSql(connection,sql)
 
-#¸ğµç ÀÀ±Ş½ÇÀÔ¿ø È¯ÀÚµé
+#ëª¨ë“  ì‘ê¸‰ì‹¤ì…ì› í™˜ìë“¤
 #===========================================
 # (O)
 #===========================================
@@ -71,7 +71,7 @@ sql <- SqlRender::translateSql(sql,
                                targetDialect=connectionDetails$dbms)$sql
 DatabaseConnector::executeSql(connection,sql)
 
-#30ÀÏ ÀÌ³»¿¡ ÀçÀÔ¿øÇÑ È¯ÀÚ¸¦ DF·Î »Ì¾Æ³»´Â ÇÔ¼ö.
+#30ì¼ ì´ë‚´ì— ì¬ì…ì›í•œ í™˜ìë¥¼ DFë¡œ ë½‘ì•„ë‚´ëŠ” í•¨ìˆ˜.
 covariateSettings <- FeatureExtraction::createCovariateSettings(useDemographicsGender = FALSE,
                                                                 useDemographicsAge = FALSE, useDemographicsAgeGroup = FALSE,
                                                                 useDemographicsRace = FALSE, useDemographicsEthnicity = FALSE,
@@ -116,9 +116,9 @@ population <- PatientLevelPrediction::createStudyPopulation(plpData, population 
 
 
 #################################################################################################################
-#ÇÊ¿äÇÑ Á¤º¸¸¸ ²¨³» dataframeÀ¸·Î ¸¸µê -> 30ÀÏ ÀÌ³»¿¡ ÀÔ¿ø À¯¹«¸¦ ÆÄ¾ÇÇØ °á°ú°¡ ÀúÀåµÊ.
+#í•„ìš”í•œ ì •ë³´ë§Œ êº¼ë‚´ dataframeìœ¼ë¡œ ë§Œë“¦ -> 30ì¼ ì´ë‚´ì— ì…ì› ìœ ë¬´ë¥¼ íŒŒì•…í•´ ê²°ê³¼ê°€ ì €ì¥ë¨.
 outcomeCount_df <- data.frame(c(population["subjectId"],population["cohortStartDate"],population["outcomeCount"]))
-#Á¶ÀÎÇÏ±â À§ÇØ NOTE_TABLE°ú ¼Ó¼º ÀÌ¸§À» ÅëÀÏ ½ÃÄÑÁÜ 
+#ì¡°ì¸í•˜ê¸° ìœ„í•´ NOTE_TABLEê³¼ ì†ì„± ì´ë¦„ì„ í†µì¼ ì‹œì¼œì¤Œ 
 colnames(outcomeCount_df) <-c("PERSON_ID","NOTE_DATE","outcomeCount")
 #################################################################################################################
 
